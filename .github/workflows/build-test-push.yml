@@ -16,7 +16,7 @@ jobs:
         run: docker build ./venv/app1 -t voltage789/mic:latest
       #Test
       - name : Run Docker Container
-        run: docker run -p 8000:80 -d voltage789/mic:latest
+        run: docker run -p 8000:80 voltage789/mic:latest
       - name: Init Python
         uses: actions/setup-python@v4
         with:
