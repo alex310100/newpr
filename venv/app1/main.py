@@ -45,7 +45,7 @@ FastAPIInstrumentor.instrument_app(app)
 ####################
 
 from sqlalchemy.orm import Session
-from app1.sl_app import crud, schemas
+from app1.sql_app import crud, schemas
 from app1.sql_app.database import SessionLocal
 from fastapi import Depends, HTTPException
 
