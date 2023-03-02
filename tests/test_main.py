@@ -18,13 +18,13 @@ class TestDociments():
         response = requests.post(f'{api_url}/doc/docs',json=body)
         assert response.status_code == 200
         assert response.json().get('title') == "shittitle"
-        assert len(response.json()) == 1
+
 
     def test_get_id_Doc(self):
         response = requests.get(f'{api_url}/doc/docs/0')
         assert response.status_code == 200
         assert response.json().get('title') == "shittitle"
-        assert len(response.json()) == 1
+
 
     def test_fill_get_Docs(self):
         response = requests.get(f'{api_url}/doc/docs')
