@@ -8,8 +8,8 @@ def get_docs_by_id(db:Session,document_id:int):
 def get_docs(db:Session,skip: int=0,limit:int=100):
     return db.query(models.SQLDocument).offset(skip).limit(limit).all()
 
-def add_doc(db:Session,document: schemas.SQLDocumentBase):
-    db_document = models.SQLDocument(title = document.title,body=document.body)
+def add_doc(db:Session, document: schemas.SQLDocumentBase):
+    db_document = models.SQLDocument(title = document.title, body=document.body)
     db.add(db_document)
     db.commit()
     db.refresh(db_document)

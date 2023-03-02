@@ -1,10 +1,9 @@
-from fastapi import FastAPI,HTTPException
-from app1.document import Document,CreateDocModel
-
+from fastapi import FastAPI
+from app1.document import Document
 
 documents: list[Document]=[
-    # Document(0,'First','Content1'),
-    # Document(1,'Second','Content2')
+    Document(0,'First','Content1'),
+    Document(1,'Second','Content2')
 ]
 
 app = FastAPI()
@@ -45,11 +44,10 @@ FastAPIInstrumentor.instrument_app(app)
 
 ####################
 
-from sql_app import schemas
 from sqlalchemy.orm import Session
-from sql_app import crud
-from sql_app.database import SessionLocal
-from fastapi import Depends, FastAPI, HTTPException
+from app1.sl_app import crud, schemas
+from app1.sql_app.database import SessionLocal
+from fastapi import Depends, HTTPException
 
 # Dependency
 def get_db():
@@ -64,21 +62,25 @@ def get_db():
 #     documents.append(Document(id,content.title,content.body))
 #     return id
 
-@app.get("/doc/docs",response_model= schemas.SQLDocumentCreate)
+@app.get("/doc/docs", response_model= schemas.SQLDocumentCreate)
 async def getAllDocs(skip:int=0,limit:int=100,db:Session=Depends(get_db)):
-    documents=crud.get_docs(db,skip,limit)
+    documents= crud.get_docs(db, skip, limit)
     return documents
 
-@app.post("/doc/docs",response_model= schemas.SQLDocumentCreate)
-async def postDoc(document: schemas.SQLDocumentBase,db:Session = Depends(get_db)):
-    db_document = crud.get_docs_by_id(db,title = document.title)
+# @app.get("/doc/docs")
+# async def getAllDocs():
+#     return documents
+
+@app.post("/doc/docs", response_model= schemas.SQLDocumentCreate)
+async def postDoc(document: schemas.SQLDocumentBase, db:Session = Depends(get_db)):
+    db_document = crud.get_docs_by_id(db, title = document.title)
     if(db_document):
         raise HTTPException(status_code=400, detail= "Title already exist")
-    return crud.add_doc(db=db,document=document)
+    return crud.add_doc(db=db, document=document)
 
-@app.get("/doc/docs/{id}",response_model= schemas.SQLDocumentCreate)
+@app.get("/doc/docs/{id}", response_model= schemas.SQLDocumentCreate)
 async def getDocsById(id:int,db:Session=Depends(get_db)):
-    db_document = crud.get_docs_by_id(db,document_id=id)
+    db_document = crud.get_docs_by_id(db, document_id=id)
     if db_document is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return db_document
