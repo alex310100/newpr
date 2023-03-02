@@ -51,6 +51,7 @@ from sql_app import crud
 from sql_app.database import SessionLocal
 from fastapi import Depends, FastAPI, HTTPException
 
+# Dependency
 def get_db():
     db=SessionLocal()
     try:
@@ -58,13 +59,14 @@ def get_db():
     finally:
         db.close()
 
-def addDocument(content:CreateDocModel):
-    id= len(documents)
-    documents.append(Document(id,content.title,content.body))
-    return id
+# def addDocument(content:CreateDocModel):
+#     id= len(documents)
+#     documents.append(Document(id,content.title,content.body))
+#     return id
 
-@app.get("/doc/docs")
-async def getAllDocs():
+@app.get("/doc/docs",response_model= schemas.SQLDocumentCreate)
+async def getAllDocs(skip:int=0,limit:int=100,db:Session=Depends(get_db)):
+    documents=crud.get_docs(db,skip,limit)
     return documents
 
 @app.post("/doc/docs",response_model= schemas.SQLDocumentCreate)
@@ -74,13 +76,13 @@ async def postDoc(document: schemas.SQLDocumentBase,db:Session = Depends(get_db)
         raise HTTPException(status_code=400, detail= "Title already exist")
     return crud.add_doc(db=db,document=document)
 
-@app.get("/doc/docs/{id}")
-async def getDocsById(id:int):
-    result = [item for item in documents if item.id==id]
-    if len(result) > 0:
-        return result[0]
+@app.get("/doc/docs/{id}",response_model= schemas.SQLDocumentCreate)
+async def getDocsById(id:int,db:Session=Depends(get_db)):
+    db_document = crud.get_docs_by_id(db,document_id=id)
+    if db_document is None:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return db_document
 
-    raise HTTPException(status_code=404, detail="Item not found")
 
 
 @app.get("/__health_check")
