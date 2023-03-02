@@ -11,9 +11,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      #build image
       - name: Build Docker Image
         run: docker build ./venv/app1 -t voltage789/mic:latest
+      #Test
+      - name : Run Docker Container
+        run: docker run -p 8000:80 -d voltage789/mic:latest
+      - name: Init Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+      - name: Install requirements
+        run: pip install pytest requests
+      - name: Run tests
+        run: pytest
 
+      #Login and push
       - name: Login into Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
