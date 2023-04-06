@@ -10,7 +10,7 @@ scrape_configs:
       - targets: [ "krakend_ce:9091" ]
   - job_name: documents-service
     static_configs:
-      - targets: [ "documents" ]
+      - targets: [ "localhost:8000" ]
   - job_name: templates-service
     static_configs:
-      - targets: [ "templates" ]
+      - targets: [ "localhost:8001" ]
